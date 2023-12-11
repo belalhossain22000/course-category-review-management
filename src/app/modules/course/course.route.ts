@@ -9,8 +9,9 @@ router.post(
 router.get(
     '/', CourseControllers.getAllCourse,
 );
-router.put(
-    '/:courseId', CourseControllers.updatedCourse,
+router.get(
+    '/:courseId/reviews', CourseControllers.getSingleCourse,
 );
+
 
 export const CourseRoutes = router;
