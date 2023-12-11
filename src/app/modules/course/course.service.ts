@@ -28,7 +28,32 @@ const getAllCourseFromDB = async () => {
     const result = await CourseModel.find();
     return result
 }
+const updatedCourseIntoDB = async (courseId, updateData) => {
+
+    const course = await CourseModel.findById(courseId);
+    if (!course) {
+        throw new Error('Course not found');
+    }
+
+    // Update the course dynamically with the received data
+    Object.keys(updateData).forEach((key) => {
+        // Handle updates for non-primitive fields (e.g., objects or arrays)
+        if (typeof updateData[key] === 'object' && !Array.isArray(updateData[key])) {
+            // Update non-primitive fields dynamically
+            Object.assign(course[key], updateData[key]);
+        } else {
+            // Update primitive fields
+            course[key] = updateData[key];
+        }
+    });
+
+    // Save the updated course
+    await course.save();
+    const result = await CourseModel.findByIdAndUpdate(courseId, updateData, { new: true });
+    return result
+}
 export const CourseServices = {
     createCourseIntoDB,
-    getAllCourseFromDB
+    getAllCourseFromDB,
+    updatedCourseIntoDB
 };

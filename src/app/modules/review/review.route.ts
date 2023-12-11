@@ -1,11 +1,13 @@
 import express from 'express'
 import { CourseReviewControllers } from './review.controller';
+import { ReviewValidation } from './review.validation';
+import { validateData } from '../../middlewares/validateData';
 
 
 const router = express.Router();
 
 router.post(
-    '/', CourseReviewControllers.createCourseReview,
+    '/', validateData(ReviewValidation.CreteReviewValidationSchema), CourseReviewControllers.createCourseReview,
 );
 
 
