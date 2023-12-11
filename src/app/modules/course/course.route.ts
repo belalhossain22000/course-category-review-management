@@ -6,5 +6,8 @@ const router = express.Router();
 router.post(
     '/', CourseControllers.createCourse,
 );
+router.get(
+    '/', CourseControllers.getAllCourse,
+);
 
 export const CourseRoutes = router;

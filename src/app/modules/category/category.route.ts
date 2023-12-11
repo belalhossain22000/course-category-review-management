@@ -9,5 +9,8 @@ const router = express.Router();
 router.post(
     '/', CAtegoryControllers.createCategory,
 );
+router.get(
+    '/', CAtegoryControllers.getAllCategory,
+);
 
 export const CategoryRoutes = router;
