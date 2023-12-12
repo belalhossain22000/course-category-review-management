@@ -4,6 +4,8 @@ import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { CourseServices } from "./course.service";
 
+
+//create course with category
 const createCourse = catchAsync(async (req, res) => {
     const result = await CourseServices.createCourseIntoDB(
         req.body,
@@ -18,7 +20,6 @@ const createCourse = catchAsync(async (req, res) => {
 });
 
 //get all course with searching and filtering
-
 const getAllCourse = catchAsync(async (req, res) => {
     const result = await CourseServices.getAllCourseFromDB();
 
@@ -30,6 +31,8 @@ const getAllCourse = catchAsync(async (req, res) => {
         data: result,
     });
 });
+
+//get single course with review
 const getSingleCourse = catchAsync(async (req, res) => {
     const courseId = req.params.courseId
     const result = await CourseServices.getSingleCourseFromDB(courseId);
@@ -43,8 +46,23 @@ const getSingleCourse = catchAsync(async (req, res) => {
     });
 });
 
+//get best course based on review
+const getBestCourse = catchAsync(async (req, res) => {
+
+    const result = await CourseServices.getBestCourseFromDB();
+
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: 'Best course retrieved successfully',
+        data: result,
+    });
+});
+
 export const CourseControllers = {
     createCourse,
     getAllCourse,
-    getSingleCourse
+    getSingleCourse,
+    getBestCourse
 };

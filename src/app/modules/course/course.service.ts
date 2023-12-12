@@ -2,6 +2,7 @@
 import mongoose from "mongoose";
 import { TCourse } from "./course.interface";
 import { CourseModel } from "./course.model";
+import { ReviewModel } from "../review/review.model";
 
 
 
@@ -26,13 +27,13 @@ const createCourseIntoDB = async (payload: TCourse) => {
 };
 
 //get all course with searching and filtering
-
 const getAllCourseFromDB = async () => {
     const result = await CourseModel.find();
     return result
 }
 
-async function getSingleCourseFromDB(courseId: string): Promise<void> {
+//get single course with review
+const getSingleCourseFromDB = async (courseId: string): Promise<void> => {
 
     const convertedId = new mongoose.Types.ObjectId(courseId);
 
@@ -61,8 +62,50 @@ async function getSingleCourseFromDB(courseId: string): Promise<void> {
     }
 
 }
+
+//get best course based on review
+const getBestCourseFromDB = async () => {
+    const result = await ReviewModel.aggregate([
+
+        {
+            $group: {
+                _id: '$courseId',
+                averageRating: { $avg: '$rating' },
+                reviewCount: { $sum: 1 },
+            },
+        },
+        {
+            $sort: { averageRating: -1, reviewCount: -1 },
+        },
+        {
+            $lookup: {
+                from: 'courses',
+                localField: '_id',
+                foreignField: '_id',
+                as: 'course',
+            },
+        },
+        {
+            $unwind: '$course',
+        },
+
+    ]);
+
+
+
+    if (result.length > 0) {
+        const bestCourse = result[0];
+        return bestCourse
+    } else {
+        return "Course not found"
+    }
+
+}
+
+
 export const CourseServices = {
     createCourseIntoDB,
     getAllCourseFromDB,
-    getSingleCourseFromDB
+    getSingleCourseFromDB,
+    getBestCourseFromDB
 };

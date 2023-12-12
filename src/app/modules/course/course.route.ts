@@ -12,6 +12,9 @@ router.get(
 router.get(
     '/:courseId/reviews', CourseControllers.getSingleCourse,
 );
+router.get(
+    '/best', CourseControllers.getBestCourse,
+);
 
 
 export const CourseRoutes = router;
