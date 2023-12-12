@@ -15,6 +15,9 @@ router.get(
 router.get(
     '/best', CourseControllers.getBestCourse,
 );
+router.put(
+    '/:courseId', CourseControllers.updateCourse,
+);
 
 
 export const CourseRoutes = router;

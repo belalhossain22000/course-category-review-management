@@ -51,7 +51,6 @@ const getBestCourse = catchAsync(async (req, res) => {
 
     const result = await CourseServices.getBestCourseFromDB();
 
-
     sendResponse(res, {
         success: true,
         statusCode: httpStatus.OK,
@@ -60,9 +59,24 @@ const getBestCourse = catchAsync(async (req, res) => {
     });
 });
 
+//update course by id
+const updateCourse = catchAsync(async (req, res) => {
+    const courseId = req.params.courseId;
+    const updatedData = req.body
+    const result = await CourseServices.updateCourseIntoDB(courseId, updatedData);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: 'Course updated successfully',
+        data: result,
+    });
+});
+
 export const CourseControllers = {
     createCourse,
     getAllCourse,
     getSingleCourse,
-    getBestCourse
+    getBestCourse,
+    updateCourse
 };

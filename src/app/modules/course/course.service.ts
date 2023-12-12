@@ -102,10 +102,79 @@ const getBestCourseFromDB = async () => {
 
 }
 
+//update course
+const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
+    try {
+        const { tags, details, ...courseRemainingData } = payload;
+
+        // Update basic course info (excluding tags and details)
+        const updateBasicCourseInfo = await CourseModel.findByIdAndUpdate(
+            id,
+            courseRemainingData,
+            { new: true, runValidators: true }
+        );
+
+        // Update details if provided
+        if (details) {
+            await CourseModel.findByIdAndUpdate(
+                id,
+                {
+                    $set: {
+                        'details.level': details.level,
+                        'details.description': details.description,
+                    },
+                },
+                { new: true, runValidators: true }
+            );
+        }
+
+        // Update tags
+        if (tags && tags.length > 0) {
+            const existingTags = updateBasicCourseInfo?.tags.map((tag) => tag.name);
+
+            for (const tag of tags) {
+                if (tag.name && !tag.isDeleted) {
+                    if (!existingTags?.includes(tag.name)) {
+                        // If tag with the same name doesn't exist, add it
+                        await CourseModel.findByIdAndUpdate(
+                            id,
+                            { $addToSet: { tags: tag } },
+                            { runValidators: true }
+                        );
+                    } else {
+                        // If tag exists, update its properties (e.g., isDeleted)
+                        await CourseModel.findOneAndUpdate(
+                            { _id: id, 'tags.name': tag.name },
+                            { $set: { 'tags.$.isDeleted': false } },
+                            { runValidators: true }
+                        );
+                    }
+                } else if (tag.name && tag.isDeleted) {
+                    // Remove tag with isDeleted: true
+                    await CourseModel.findOneAndUpdate(
+                        { _id: id, 'tags.name': tag.name },
+                        { $pull: { tags: { name: tag.name } } },
+                        { runValidators: true }
+                    );
+                }
+            }
+        }
+
+        // Fetch and return the updated course data
+        const updatedCourse = await CourseModel.findById(id);
+        return updatedCourse;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
+
 
 export const CourseServices = {
     createCourseIntoDB,
     getAllCourseFromDB,
     getSingleCourseFromDB,
-    getBestCourseFromDB
+    getBestCourseFromDB,
+    updateCourseIntoDB
 };
