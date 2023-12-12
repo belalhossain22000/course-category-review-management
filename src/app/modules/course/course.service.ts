@@ -27,9 +27,86 @@ const createCourseIntoDB = async (payload: TCourse) => {
 };
 
 //get all course with searching and filtering
-const getAllCourseFromDB = async () => {
-    const result = await CourseModel.find();
-    return result
+const getAllCourseFromDB = async (query) => {
+
+    let {
+        page = 1,
+        limit = 10,
+        // eslint-disable-next-line prefer-const
+        sortBy = 'title',
+        // eslint-disable-next-line prefer-const
+        sortOrder = 'asc',
+        // eslint-disable-next-line prefer-const
+        minPrice,
+        // eslint-disable-next-line prefer-const
+        maxPrice,
+        // eslint-disable-next-line prefer-const
+        tags,
+        // eslint-disable-next-line prefer-const
+        startDate,
+        // eslint-disable-next-line prefer-const
+        endDate,
+        // eslint-disable-next-line prefer-const
+        language,
+        // eslint-disable-next-line prefer-const
+        provider,
+        // eslint-disable-next-line prefer-const
+        durationInWeeks,
+        // eslint-disable-next-line prefer-const
+        level,
+    } = query;
+
+    page = +page;
+    limit = +limit;
+
+    const skip = (page - 1) * limit;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const filter: any = {};
+
+    if (minPrice !== undefined && maxPrice !== undefined) {
+        filter.price = { $gte: +minPrice, $lte: +maxPrice };
+    }
+
+    if (tags) {
+        filter['tags.name'] = tags;
+    }
+
+    if (startDate !== undefined && endDate !== undefined) {
+        filter.startDate = { $gte: startDate, $lte: endDate };
+    }
+
+    if (language) {
+        filter.language = language;
+    }
+
+    if (provider) {
+        filter.provider = provider;
+    }
+
+    if (durationInWeeks) {
+        filter.durationInWeeks = durationInWeeks;
+    }
+
+    if (level) {
+        filter['details.level'] = level;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const sortCriteria: any = {};
+    sortCriteria[sortBy] = sortOrder === 'asc' ? 1 : -1;
+    const courses = await CourseModel.find(filter)
+        .sort(sortCriteria)
+        .skip(skip)
+        .limit(limit);
+    const totalCoursesCount = await CourseModel.countDocuments(filter);
+    const meta = {
+        page,
+        limit,
+        total: totalCoursesCount,
+    }
+    const returnData = { courses, meta }
+    return returnData
 }
 
 //get single course with review

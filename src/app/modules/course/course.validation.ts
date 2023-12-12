@@ -17,7 +17,6 @@ const CreateCourseValidationSchema = z.object({
     endDate: z.string(),
     language: z.string(),
     provider: z.string(),
-    durationInWeeks: z.number().positive(),
     details: z.object({
         level: z.string(),
         description: z.string(),

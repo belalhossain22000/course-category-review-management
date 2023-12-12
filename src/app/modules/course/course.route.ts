@@ -6,10 +6,10 @@ import { CourseValidation } from './course.validation';
 const router = express.Router();
 
 router.post(
-    '/', CourseControllers.createCourse,
+    '/', validateData(CourseValidation.CreateCourseValidationSchema), CourseControllers.createCourse,
 );
 router.get(
-    '/', validateData(CourseValidation.CreateCourseValidationSchema), CourseControllers.getAllCourse,
+    '/', CourseControllers.getAllCourse,
 );
 router.get(
     '/:courseId/reviews', CourseControllers.getSingleCourse,
