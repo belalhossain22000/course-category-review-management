@@ -2,6 +2,7 @@
 import cors from 'cors';
 import express, { Application, Request, Response } from 'express';
 import router from './app/router';
+import globalErrorHandler from './app/middlewares/globalErrorHandler';
 
 
 const app: Application = express();
@@ -18,4 +19,6 @@ app.get('/', (req: Request, res: Response) => {
   res.send('server is running');
 });
 
+// Use the error handler as the last middleware
+app.use(globalErrorHandler);
 export default app;
