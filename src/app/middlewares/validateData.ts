@@ -1,8 +1,8 @@
-import { z, ZodError } from 'zod';
+import { AnyZodObject, ZodError } from 'zod';
 import { Request, Response, NextFunction } from 'express';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const validateData = (schema: z.ZodObject<any>) => {
+export const validateData = (schema: AnyZodObject) => {
     return (req: Request, res: Response, next: NextFunction) => {
         try {
             schema.parse(req.body);
