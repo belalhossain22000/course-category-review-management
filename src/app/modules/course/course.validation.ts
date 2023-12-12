@@ -1,15 +1,15 @@
 import { z } from 'zod';
 
-//tags validtion
+//tags validation
 const TagValidationSchema = z.object({
-    name: z.string().nonempty(),
+    name: z.string(),
     isDeleted: z.boolean(),
 });
 
 //Create course validation
 const CreateCourseValidationSchema = z.object({
-    title: z.string().nonempty(),
-    instructor: z.string().nonempty(),
+    title: z.string(),
+    instructor: z.string(),
     categoryId: z.string(),
     price: z.number().positive(),
     tags: z.array(TagValidationSchema),
@@ -38,7 +38,7 @@ const UpdateValidationCourseSchema = z.object({
     details: z.object({
         level: z.string().optional(),
         description: z.string().optional(),
-    }),
+    }).optional(),
 });
 
 export const CourseValidation = {
