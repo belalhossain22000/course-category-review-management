@@ -27,7 +27,7 @@ const createCourseIntoDB = async (payload: TCourse) => {
 };
 
 //get all course with searching and filtering
-const getAllCourseFromDB = async (query) => {
+const getAllCourseFromDB = async (query: Record<string, unknown>) => {
 
     let {
         page = 1,

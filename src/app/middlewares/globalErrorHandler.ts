@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { ZodError, ZodIssue } from "zod";
 
 
 // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
@@ -13,7 +14,20 @@ const globalErrorHandler = ((err: Error, req: Request, res: Response, next: Next
     };
     if (err.name === 'CastError') {
         errorResponse.message = 'Invalid ID';
-        errorResponse.errorMessage = `${err.value as string} is not a valid ID!`;
+        errorResponse.errorMessage = `${err.value} is not a valid ID!`;
+    } else if (err instanceof ZodError) {
+        errorResponse.message = 'Validation Error';
+        errorResponse.errorMessage = err.issues.map((issue: ZodIssue) => {
+            return {
+                path: issue?.path[issue.path.length - 1],
+                message: issue.message,
+            };
+        })
+    } else if (err?.code === 11000) {
+        const match = err.message.match(/"([^"]*)"/);
+        const extractedMessage = match && match[1];
+        errorResponse.message = 'Duplicate Key Error';
+        errorResponse.errorMessage = extractedMessage
     }
 
     res.status(500).json(errorResponse);
