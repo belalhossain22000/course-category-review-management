@@ -27,7 +27,9 @@ const globalErrorHandler = ((err: Error, req: Request, res: Response, next: Next
         const match = err.message.match(/"([^"]*)"/);
         const extractedMessage = match && match[1];
         errorResponse.message = 'Duplicate Key Error';
-        errorResponse.errorMessage = extractedMessage
+        errorResponse.errorMessage = `${extractedMessage} is already exist`
+    } else if (err?.name === 'ValidationError') {
+        errorResponse.message = err?._message;
     }
 
     res.status(500).json(errorResponse);
