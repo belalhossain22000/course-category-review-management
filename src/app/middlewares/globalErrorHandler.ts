@@ -16,13 +16,14 @@ const globalErrorHandler = ((err: Error, req: Request, res: Response, next: Next
         errorResponse.message = 'Invalid ID';
         errorResponse.errorMessage = `${err.value} is not a valid ID!`;
     } else if (err instanceof ZodError) {
-        errorResponse.message = 'Validation Error';
-        errorResponse.errorMessage = err.issues.map((issue: ZodIssue) => {
+        const extractedMessage = err.issues.map((issue: ZodIssue) => {
             return {
                 path: issue?.path[issue.path.length - 1],
                 message: issue.message,
             };
         })
+        errorResponse.message = 'Validation Error';
+        errorResponse.errorMessage = extractedMessage
     } else if (err?.code === 11000) {
         const match = err.message.match(/"([^"]*)"/);
         const extractedMessage = match && match[1];
