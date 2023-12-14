@@ -13,7 +13,7 @@ const createCourse = catchAsync(async (req, res) => {
 
     sendResponse(res, {
         success: true,
-        statusCode: httpStatus.OK,
+        statusCode: 201,
         message: 'Course created successfully',
         data: result,
     });
