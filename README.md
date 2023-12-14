@@ -9,7 +9,7 @@ This project serves as an API demonstrating course ,review and course category m
 1. Clone this repository:
 
    ```bash
-   git clone https://github.com/belalhossain22000/assaignment-3.git
+   git clone https://github.com/Porgramming-Hero-web-course/l2b2a3-course-review-belalhossain22000.git
    cd assignment-2
    ```
 

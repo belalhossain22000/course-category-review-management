@@ -1,4 +1,4 @@
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose from "mongoose";
 import { TCourse } from "./course.interface";
 import { CourseModel } from "./course.model";
@@ -30,7 +30,9 @@ const createCourseIntoDB = async (payload: TCourse) => {
 const getAllCourseFromDB = async (query: Record<string, unknown>) => {
 
     let {
+        // eslint-disable-next-line prefer-const
         page = 1,
+        // eslint-disable-next-line prefer-const
         limit = 10,
         // eslint-disable-next-line prefer-const
         sortBy = 'title',
@@ -56,17 +58,18 @@ const getAllCourseFromDB = async (query: Record<string, unknown>) => {
         level,
     } = query;
 
-    page = +page;
-    limit = +limit;
-
-    const skip = (page - 1) * limit;
+    // Type assertions to indicate the variables' types
+    const pageNumber = typeof page === 'string' ? +page : (page as number);
+    const limitNumber = typeof limit === 'string' ? +limit : (limit as number);
+    const skip = (pageNumber - 1) * limitNumber;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const filter: any = {};
 
     if (minPrice !== undefined && maxPrice !== undefined) {
-        filter.price = { $gte: +minPrice, $lte: +maxPrice };
+        filter.price = { $gte: +minPrice!, $lte: +maxPrice! };
     }
+
 
     if (tags) {
         filter['tags.name'] = tags;
@@ -92,13 +95,13 @@ const getAllCourseFromDB = async (query: Record<string, unknown>) => {
         filter['details.level'] = level;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const sortCriteria: any = {};
-    sortCriteria[sortBy] = sortOrder === 'asc' ? 1 : -1;
+    sortCriteria[sortBy as string] = sortOrder === 'asc' ? 1 : -1;
+
     const courses = await CourseModel.find(filter)
         .sort(sortCriteria)
         .skip(skip)
-        .limit(limit);
+        .limit(limit as number);
     const totalCoursesCount = await CourseModel.countDocuments(filter);
     const meta = {
         page,
@@ -182,7 +185,18 @@ const getBestCourseFromDB = async () => {
 //update course with course id
 const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
 
-    const { tags, details, ...courseRemainingData } = payload;
+    const { tags, details, endDate, startDate, ...courseRemainingData } = payload;
+
+    // Calculate durationInWeeks
+    if (startDate !== undefined && endDate !== undefined) {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const millisecondsInWeek = 604800000;
+        const durationInWeeks = Math.ceil((end.getTime() - start.getTime()) / millisecondsInWeek);
+
+        courseRemainingData.durationInWeeks = durationInWeeks
+    }
+
 
     // Updating basic course info 
     const updateBasicCourseInfo = await CourseModel.findByIdAndUpdate(
