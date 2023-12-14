@@ -184,7 +184,10 @@ const getBestCourseFromDB = async () => {
 
 //update course with course id
 const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
-
+    const existCourse = await CourseModel.isCourseExists(id)
+    if (!existCourse) {
+        throw new Error(`Course not found with the id ${id}`)
+    }
     const { tags, details, endDate, startDate, ...courseRemainingData } = payload;
 
     // Calculate durationInWeeks

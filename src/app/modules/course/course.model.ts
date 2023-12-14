@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { TCourse } from "./course.interface";
+import { TCourse, TCourseModel } from "./course.interface";
 
 const courseSchema = new Schema<TCourse>({
     title: { type: String, required: true, unique: true },
@@ -54,5 +54,11 @@ const courseSchema = new Schema<TCourse>({
     },
 });
 
+//creating a custom static method
+courseSchema.statics.isCourseExists = async function (id: string) {
+    const existingCourse = await CourseModel.findOne({ _id: id });
+    return existingCourse;
+};
+
 // Compile the model using the schema
-export const CourseModel = model<TCourse>('Course', courseSchema);
+export const CourseModel = model<TCourse, TCourseModel>('Course', courseSchema);
