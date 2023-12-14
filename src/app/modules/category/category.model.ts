@@ -8,6 +8,7 @@ const categorySchema = new Schema<TCategory>(
             type: String,
             required: true,
             unique: true,
+            index: true
         },
     },
     {
