@@ -1,8 +1,9 @@
 # Assignment-3
 
 ## Description
-
-This project serves as an API demonstrating course ,review and course category management functionality.
+## Live deployment link:https://assaignment-3.vercel.app/
+## Project demonstration video: 
+This project serves as an API demonstrating course, review, and course category management functionality.
 
 ## Installation
 
