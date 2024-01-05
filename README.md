@@ -1,4 +1,4 @@
-# Assignment-3
+# Course with review and category management
 
 ## Description
 ## Live deployment link:https://assaignment-3.vercel.app/
